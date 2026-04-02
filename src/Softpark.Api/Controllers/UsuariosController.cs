@@ -50,7 +50,5 @@ public class UsuariosController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Atualizar(int id, [FromBody] AtualizarUsuarioDto request)
-    {
-        return Ok(await _usuarioService.AtualizarAsync(id, request));
-    }
+        => Ok(await _usuarioService.AtualizarAsync(id, request));
 }

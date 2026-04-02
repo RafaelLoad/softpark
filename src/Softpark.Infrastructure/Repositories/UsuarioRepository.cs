@@ -42,23 +42,22 @@ public class UsuarioRepository(IDbConnectionFactory connectionFactory) : IUsuari
         using var connection = connectionFactory.CreateConnection();
         connection.Open();
 
-        var rows = await connection.QueryAsync<UsuarioComPerfilRow>(
-            @"SELECT u.Id, u.Usuario, u.Status, p.Id AS PerfilId, p.Perfil
-              FROM usuario u
-              LEFT JOIN usuario_perfil p ON u.Id = p.UsuarioId
-              WHERE u.Id = @Id",
+        var usuario = await connection.QueryFirstOrDefaultAsync<UsuarioRow>(
+            "SELECT Id, Usuario, Status FROM usuario WHERE Id = @Id",
             new { Id = id });
 
-        var grupo = rows.GroupBy(r => new { r.Id, r.Usuario, r.Status }).FirstOrDefault();
-        if (grupo is null)
+        if (usuario is null)
             return null;
 
+        var perfis = await connection.QueryAsync<PerfilRow>(
+            "SELECT Id, Perfil FROM usuario_perfil WHERE UsuarioId = @UsuarioId",
+            new { UsuarioId = id });
+
         return Usuario.Carregar(
-            (int)grupo.Key.Id,
-            grupo.Key.Usuario,
-            grupo.Key.Status != 0,
-            grupo.Where(r => r.PerfilId is not null)
-                 .Select(r => UsuarioPerfil.Carregar((int)r.PerfilId!, (int)grupo.Key.Id, r.Perfil!))
+            (int)usuario.Id,
+            usuario.Usuario,
+            usuario.Status != 0,
+            perfis.Select(p => UsuarioPerfil.Carregar((int)p.Id, id, p.Perfil))
         );
     }
 
@@ -146,5 +145,7 @@ public class UsuarioRepository(IDbConnectionFactory connectionFactory) : IUsuari
         }
     }
 
+    private record UsuarioRow(long Id, string Usuario, long Status);
+    private record PerfilRow(long Id, string Perfil);
     private record UsuarioComPerfilRow(long Id, string Usuario, long Status, long? PerfilId, string? Perfil);
 }

@@ -14,7 +14,9 @@ public static class DependencyInjection
     public static IServiceCollection AddDependencies(this IServiceCollection services, IConfiguration configuration)
     {
         AddApplicationSetup(services);
+        AddDomainSetup(services);
         AddInfraSetup(services, configuration);
+        AddDatabaseSetup(services, configuration);
 
         return services;
     }
@@ -25,6 +27,12 @@ public static class DependencyInjection
             .AddScoped<IUsuarioService, UsuarioService>();
     }
 
+    private static void AddDomainSetup(IServiceCollection services)
+    {
+        services
+            .AddScoped<IUsuarioRepository, UsuarioRepository>();
+    }
+
     private static void AddInfraSetup(IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<JwtSettings>(options =>
@@ -33,13 +41,10 @@ public static class DependencyInjection
             options.Secret = section["Secret"] ?? string.Empty;
             options.Issuer = section["Issuer"] ?? string.Empty;
             options.Audience = section["Audience"] ?? string.Empty;
-            options.ExpiracaoHoras = int.TryParse(section["ExpiracaoHoras"], out var h) ? h : 1;
+            options.ExpiracaoHoras = int.TryParse(section["ExpiracaoHoras"], out var horas) ? horas : 1;
         });
 
-        AddDatabaseSetup(services, configuration);
-
         services
-            .AddScoped<IUsuarioRepository, UsuarioRepository>()
             .AddScoped<IAuthService, JwtAuthService>();
     }
 
