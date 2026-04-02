@@ -60,6 +60,12 @@ public static class DependencyInjection
         }
         else
         {
+            services.Configure<ConnectionStrings>(options =>
+            {
+                var section = configuration.GetSection("ConnectionStrings");
+                options.DefaultConnection = section["DefaultConnection"] ?? string.Empty;
+            });
+
             services.AddSingleton<IDbConnectionFactory, SqlConnectionFactory>();
         }
     }

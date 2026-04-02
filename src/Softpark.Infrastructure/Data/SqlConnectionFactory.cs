@@ -1,13 +1,12 @@
 using System.Data;
 using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace Softpark.Infrastructure.Data;
 
-public class SqlConnectionFactory(IConfiguration configuration) : IDbConnectionFactory
+public class SqlConnectionFactory(IOptions<ConnectionStrings> settings) : IDbConnectionFactory
 {
-    private readonly string _connectionString = configuration.GetConnectionString("DefaultConnection")
-        ?? throw new InvalidOperationException("Connection string 'DefaultConnection' não configurada.");
+    private readonly string _connectionString = settings.Value.DefaultConnection;
 
     public IDbConnection CreateConnection()
     {
