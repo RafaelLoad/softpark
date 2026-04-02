@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Softpark.Api/Softpark.Api.csproj" />
+    <Project Path="src/Softpark.Application/Softpark.Application.csproj" />
+    <Project Path="src/Softpark.Domain/Softpark.Domain.csproj" />
+    <Project Path="src/Softpark.Infrastructure/Softpark.Infrastructure.csproj" />
+  </Folder>
+</Solution>

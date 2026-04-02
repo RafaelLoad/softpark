@@ -1,0 +1,6 @@
+@Softpark.Api_HostAddress = http://localhost:5127
+
+GET {{Softpark.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
