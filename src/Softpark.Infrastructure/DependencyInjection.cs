@@ -11,7 +11,21 @@ namespace Softpark.Infrastructure;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddDependencies(this IServiceCollection services, IConfiguration configuration)
+    {
+        AddApplicationSetup(services);
+        AddInfraSetup(services, configuration);
+
+        return services;
+    }
+
+    private static void AddApplicationSetup(IServiceCollection services)
+    {
+        services
+            .AddScoped<IUsuarioService, UsuarioService>();
+    }
+
+    private static void AddInfraSetup(IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<JwtSettings>(options =>
         {
@@ -22,28 +36,26 @@ public static class DependencyInjection
             options.ExpiracaoHoras = int.TryParse(section["ExpiracaoHoras"], out var h) ? h : 1;
         });
 
+        AddDatabaseSetup(services, configuration);
+
+        services
+            .AddScoped<IUsuarioRepository, UsuarioRepository>()
+            .AddScoped<IAuthService, JwtAuthService>();
+    }
+
+    private static void AddDatabaseSetup(IServiceCollection services, IConfiguration configuration)
+    {
         var useSqlite = configuration.GetValue<bool>("UseSqlite");
 
         if (useSqlite)
         {
-            services.AddSingleton<IDbConnectionFactory, SqliteConnectionFactory>();
-            services.AddSingleton<DatabaseInitializer>();
+            services
+                .AddSingleton<IDbConnectionFactory, SqliteConnectionFactory>()
+                .AddSingleton<DatabaseInitializer>();
         }
         else
         {
             services.AddSingleton<IDbConnectionFactory, SqlConnectionFactory>();
         }
-
-        services.AddScoped<IUsuarioRepository, UsuarioRepository>();
-        services.AddScoped<IAuthService, JwtAuthService>();
-
-        return services;
-    }
-
-    public static IServiceCollection AddApplication(this IServiceCollection services)
-    {
-        services.AddScoped<UsuarioService>();
-
-        return services;
     }
 }

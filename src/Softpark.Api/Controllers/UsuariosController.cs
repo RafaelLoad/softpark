@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Softpark.Application.DTOs;
-using Softpark.Application.UseCases;
+using Softpark.Application.Interfaces;
 
 namespace Softpark.Api.Controllers;
 
@@ -10,9 +10,9 @@ namespace Softpark.Api.Controllers;
 [Authorize]
 public class UsuariosController : ControllerBase
 {
-    private readonly UsuarioService _usuarioService;
+    private readonly IUsuarioService _usuarioService;
 
-    public UsuariosController(UsuarioService usuarioService)
+    public UsuariosController(IUsuarioService usuarioService)
     {
         _usuarioService = usuarioService;
     }

@@ -21,8 +21,7 @@ builder.Services.AddControllers(options =>
     options.Filters.Add<Softpark.Api.Filters.DomainExceptionFilter>());
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddSwaggerConfiguration();
-builder.Services.AddInfrastructure(builder.Configuration);
-builder.Services.AddApplication();
+builder.Services.AddDependencies(builder.Configuration);
 
 var app = builder.Build();
 

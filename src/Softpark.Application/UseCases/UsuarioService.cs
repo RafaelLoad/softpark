@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Softpark.Application.DTOs;
+using Softpark.Application.Interfaces;
 using Softpark.Domain.Entities;
 using Softpark.Domain.Exceptions;
 using NotFoundException = Softpark.Domain.Exceptions.NotFoundException;
@@ -7,7 +8,7 @@ using Softpark.Domain.Interfaces;
 
 namespace Softpark.Application.UseCases;
 
-public class UsuarioService
+public class UsuarioService : IUsuarioService
 {
     private readonly IUsuarioRepository _repository;
     private readonly ILogger<UsuarioService> _logger;
